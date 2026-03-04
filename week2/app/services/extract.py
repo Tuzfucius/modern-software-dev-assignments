@@ -41,11 +41,11 @@ def extract_action_items(text: str) -> List[str]:
         if _is_action_line(line):
             cleaned = BULLET_PREFIX_PATTERN.sub("", line)
             cleaned = cleaned.strip()
-            # Trim common checkbox markers
+            # 去除常见的复选框标记
             cleaned = cleaned.removeprefix("[ ]").strip()
             cleaned = cleaned.removeprefix("[todo]").strip()
             extracted.append(cleaned)
-    # Fallback: if nothing matched, heuristically split into sentences and pick imperative-like ones
+    # 后备方案：如果没有匹配到任何内容，则启发式地分割成句子并选择看起来像祈使句的句子
     if not extracted:
         sentences = re.split(r"(?<=[.!?])\s+", text.strip())
         for sentence in sentences:
@@ -54,7 +54,7 @@ def extract_action_items(text: str) -> List[str]:
                 continue
             if _looks_imperative(s):
                 extracted.append(s)
-    # Deduplicate while preserving order
+    # 在保持顺序的同时去重
     seen: set[str] = set()
     unique: List[str] = []
     for item in extracted:
@@ -71,7 +71,7 @@ def _looks_imperative(sentence: str) -> bool:
     if not words:
         return False
     first = words[0]
-    # Crude heuristic: treat these as imperative starters
+    # 简单的启发式方法：将这些视为祈使句的开头词
     imperative_starters = {
         "add",
         "create",

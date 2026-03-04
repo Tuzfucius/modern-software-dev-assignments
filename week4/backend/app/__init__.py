@@ -1,1 +1,1 @@
-"""Application package for FastAPI backend (week4)."""
+"""FastAPI 后端应用包（第4周）。"""

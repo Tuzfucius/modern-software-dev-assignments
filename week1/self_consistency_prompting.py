@@ -8,26 +8,25 @@ load_dotenv()
 
 NUM_RUNS_TIMES = 5
 
-# TODO: Fill this in! Try to get as close to 100% correctness across all runs as possible.
+# TODO: 请填写此处！尝试在所有运行中达到接近 100% 的正确率。
 YOUR_SYSTEM_PROMPT = ""
 
 USER_PROMPT = """
-Solve this problem, then give the final answer on the last line as "Answer: <number>".
+解答此问题，然后在最后一行给出最终答案，格式为 "Answer: <number>"。
 
-Henry made two stops during his 60-mile bike trip. He first stopped after 20
-miles. His second stop was 15 miles before the end of the trip. How many miles
-did he travel between his first and second stops?
+Henry 在他的 60 英里自行车旅行中停了两次。他第一次在 20 英里后停车。
+第二次停车是在离终点前 15 英里处。他在第一次和第二次停车之间骑行了多少英里？
 """
 
 EXPECTED_OUTPUT = "Answer: 25"
 
 
 def extract_final_answer(text: str) -> str:
-    """Extract the final 'Answer: ...' line from a verbose reasoning trace.
+    """从详细的推理过程中提取最后的 'Answer: ...' 行。
 
-    - Finds the LAST line that starts with 'Answer:' (case-insensitive)
-    - Normalizes to 'Answer: <number>' when a number is present
-    - Falls back to returning the matched content if no number is detected
+    - 查找以 'Answer:' 开头的最后一行（不区分大小写）
+    - 当存在数字时，将其规范化为 'Answer: <number>'
+    - 如果未检测到数字，则返回匹配的内容作为后备
     """
     matches = re.findall(r"(?mi)^\s*answer\s*:\s*(.+)\s*$", text)
     if matches:
@@ -40,13 +39,13 @@ def extract_final_answer(text: str) -> str:
 
 
 def test_your_prompt(system_prompt: str) -> bool:
-    """Run the prompt NUM_RUNS_TIMES, majority-vote on the extracted 'Answer: ...' lines.
+    """运行提示词 NUM_RUNS_TIMES 次，对提取的 'Answer: ...' 行进行多数投票。
 
-    Prints "SUCCESS" if the majority answer equals EXPECTED_OUTPUT.
+    如果多数答案等于 EXPECTED_OUTPUT，则打印 "SUCCESS"。
     """
     answers: list[str] = []
     for idx in range(NUM_RUNS_TIMES):
-        print(f"Running test {idx + 1} of {NUM_RUNS_TIMES}")
+        print(f"运行测试 {idx + 1}/{NUM_RUNS_TIMES}")
         response = chat(
             model="llama3.1:8b",
             messages=[
@@ -57,24 +56,24 @@ def test_your_prompt(system_prompt: str) -> bool:
         )
         output_text = response.message.content
         final_answer = extract_final_answer(output_text)
-        print(f"Run {idx + 1} answer: {final_answer}")
+        print(f"第 {idx + 1} 次运行答案：{final_answer}")
         answers.append(final_answer.strip())
 
     if not answers:
-        print("No answers produced.")
+        print("未产生任何答案。")
         return False
 
     counts = Counter(answers)
     majority_answer, majority_count = counts.most_common(1)[0]
-    print(f"Majority answer: {majority_answer} ({majority_count}/{len(answers)})")
+    print(f"多数答案：{majority_answer} ({majority_count}/{len(answers)})")
 
     if majority_answer.strip() == EXPECTED_OUTPUT.strip():
-        print("SUCCESS")
+        print("成功")
         return True
 
-    # Print distribution for debugging when majority does not match expected
-    print(f"Expected output: {EXPECTED_OUTPUT}")
-    print("Answer distribution:")
+    # 当多数答案与预期不符时，打印分布用于调试
+    print(f"预期输出：{EXPECTED_OUTPUT}")
+    print("答案分布：")
     for answer, count in counts.most_common():
         print(f"  {answer}: {count}")
     return False

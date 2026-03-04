@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Action Item Extractor</title>
+    <title>待办事项提取器</title>
     <style>
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; margin: 2rem auto; max-width: 800px; padding: 0 1rem; }
       h1 { font-size: 1.5rem; }
@@ -16,14 +16,14 @@
     </style>
   </head>
   <body>
-    <h1>Action Item Extractor</h1>
-    <p class="muted">Paste notes and extract actionable items. Minimal raw HTML frontend.</p>
+    <h1>待办事项提取器</h1>
+    <p class="muted">粘贴笔记并提取可操作的项目。最简化的原始HTML前端。</p>
 
-    <label for="text">Notes</label>
-    <textarea id="text" placeholder="Paste notes here...&#10;e.g.&#10;- [ ] Set up database&#10;- Implement extract endpoint"></textarea>
+    <label for="text">笔记</label>
+    <textarea id="text" placeholder="在此粘贴笔记...&#10;例如&#10;- [ ] 设置数据库&#10;- 实现提取接口"></textarea>
     <div class="row">
-      <label class="row"><input id="save_note" type="checkbox" checked /> Save as note</label>
-      <button id="extract">Extract</button>
+      <label class="row"><input id="save_note" type="checkbox" checked /> 保存为笔记</label>
+      <button id="extract">提取</button>
     </div>
 
     <div class="items" id="items"></div>
@@ -35,7 +35,7 @@
       btn.addEventListener('click', async () => {
         const text = $('#text').value;
         const save = $('#save_note').checked;
-        itemsEl.textContent = 'Extracting...';
+        itemsEl.textContent = '提取中...';
         try {
           const res = await fetch('/action-items/extract', {
             method: 'POST',
@@ -45,7 +45,7 @@
           if (!res.ok) throw new Error('Request failed');
           const data = await res.json();
           if (!data.items || data.items.length === 0) {
-            itemsEl.innerHTML = '<p class="muted">No action items found.</p>';
+            itemsEl.innerHTML = '<p class="muted">未找到待办事项。</p>';
             return;
           }
           itemsEl.innerHTML = data.items.map(it => (
@@ -63,7 +63,7 @@
           });
         } catch (err) {
           console.error(err);
-          itemsEl.textContent = 'Error extracting items';
+          itemsEl.textContent = '提取项目时出错';
         }
       });
 

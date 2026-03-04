@@ -7,32 +7,32 @@ load_dotenv()
 
 NUM_RUNS_TIMES = 5
 
-# TODO: Fill this in!
+# TODO: 请填写此处！
 YOUR_SYSTEM_PROMPT = ""
 
 
 USER_PROMPT = """
-Solve this problem, then give the final answer on the last line as "Answer: <number>".
+解答此问题，然后在最后一行给出最终答案，格式为 "Answer: <number>"。
 
-what is 3^{12345} (mod 100)?
+3^{12345} 除以 100 的余数是多少？
 """
 
 
-# For this simple example, we expect the final numeric answer only
+# 对于这个简单的例子，我们只期望最终的数字答案
 EXPECTED_OUTPUT = "Answer: 43"
 
 
 def extract_final_answer(text: str) -> str:
-    """Extract the final 'Answer: ...' line from a verbose reasoning trace.
+    """从详细的推理过程中提取最后的 'Answer: ...' 行。
 
-    - Finds the LAST line that starts with 'Answer:' (case-insensitive)
-    - Normalizes to 'Answer: <number>' when a number is present
-    - Falls back to returning the matched content if no number is detected
+    - 查找以 'Answer:' 开头的最后一行（不区分大小写）
+    - 当存在数字时，将其规范化为 'Answer: <number>'
+    - 如果未检测到数字，则返回匹配的内容作为后备
     """
     matches = re.findall(r"(?mi)^\s*answer\s*:\s*(.+)\s*$", text)
     if matches:
         value = matches[-1].strip()
-        # Prefer a numeric normalization when possible (supports integers/decimals)
+        # 尽可能使用数字规范化（支持整数和小数）
         num_match = re.search(r"-?\d+(?:\.\d+)?", value.replace(",", ""))
         if num_match:
             return f"Answer: {num_match.group(0)}"
@@ -41,9 +41,9 @@ def extract_final_answer(text: str) -> str:
 
 
 def test_your_prompt(system_prompt: str) -> bool:
-    """Run up to NUM_RUNS_TIMES and return True if any output matches EXPECTED_OUTPUT.
+    """运行最多 NUM_RUNS_TIMES 次，如果任何输出匹配 EXPECTED_OUTPUT 则返回 True。
 
-    Prints "SUCCESS" when a match is found.
+    找到匹配时打印 "SUCCESS"。
     """
     for idx in range(NUM_RUNS_TIMES):
         print(f"Running test {idx + 1} of {NUM_RUNS_TIMES}")
