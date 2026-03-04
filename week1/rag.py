@@ -52,11 +52,9 @@ REQUIRED_SNIPPETS = [
 
 
 def YOUR_CONTEXT_PROVIDER(corpus: List[str]) -> List[str]:
-    """TODO: 为此任务从 CORPUS 中选择并返回相关的文档子集。
-
-    例如，返回 [] 来模拟缺失的上下文，或返回 [corpus[0]] 来包含 API 文档。
-    """
-    return []
+    """为任务从 CORPUS 中选择并返回相关的文档子集。"""
+    # 模拟简单的检索逻辑：寻找包含 API 参考信息的文档
+    return [doc for doc in corpus if "API Reference" in doc]
 
 
 def make_user_prompt(question: str, context_docs: List[str]) -> str:
